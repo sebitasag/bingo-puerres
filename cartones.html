@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Verb Bingo – 20 cartones</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style id="pagesize"></style>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e9e4f5; font-family: 'Nunito', sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .sheet { display: flex; flex-wrap: wrap; justify-content: space-evenly; align-content: space-evenly; overflow: hidden; break-after: page; background: #fff; margin: 0 auto 10mm; }
+  @media print { body { background: #fff; } .sheet { margin: 0; } }
+  .page {
+    width: 210mm; height: 297mm; padding: 12mm 12mm 9mm;
+    background: #fffdf7;
+    background-image: radial-gradient(#f1e6c8 1.2px, transparent 1.2px);
+    background-size: 9mm 9mm;
+    display: flex; flex-direction: column; position: relative; overflow: hidden;
+  }
+  .page::before, .page::after { content: ""; position: absolute; border-radius: 50%; z-index: 0; }
+  .page::before { width: 90mm; height: 90mm; background: #ffd6e0; top: -45mm; left: -35mm; opacity: .6; }
+  .page::after  { width: 80mm; height: 80mm; background: #c9f0e4; bottom: -40mm; right: -30mm; opacity: .7; }
+  header { text-align: center; position: relative; z-index: 1; margin-bottom: 4mm; }
+  .sub { font-family: 'Fredoka'; font-weight: 500; letter-spacing: 3px; color: #6c5ce7; font-size: 13pt; text-transform: uppercase; }
+  .letters { display: flex; justify-content: center; gap: 3mm; margin: 2mm 0 1mm; }
+  .letters span {
+    font-family: 'Fredoka'; font-weight: 700; font-size: 34pt; color: #fff;
+    width: 33mm; height: 18mm; display: grid; place-items: center; border-radius: 5mm;
+    box-shadow: 0 1.5mm 0 rgba(0,0,0,.15);
+  }
+  .letters span:nth-child(1){background:#ff6b8b}.letters span:nth-child(2){background:#ffa94d}
+  .letters span:nth-child(3){background:#ffd43b;color:#5a4500}.letters span:nth-child(4){background:#38d9a9}
+  .letters span:nth-child(5){background:#6c5ce7}
+  .name { display:flex; gap:6mm; justify-content:center; align-items:flex-end; font-weight:800; color:#555; font-size:10pt; margin-top:2mm; }
+  .name i { display:inline-block; width:55mm; border-bottom: 1.5px dashed #aaa; }
+  .name b { font-family:'Fredoka'; color:#6c5ce7; font-size: 12pt; border-bottom: 1.5px dashed #aaa; padding: 0 3mm; }
+  .grid {
+    flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr);
+    gap: 3mm; position: relative; z-index: 1; min-height: 0;
+  }
+  .cell {
+    background: #fff; border: 2px solid #ece6ff; border-radius: 4mm; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 1.5mm 1mm 2mm; box-shadow: 0 1mm 0 #ece6ff; min-height: 0;
+  }
+  .cell img { flex: 1; min-height: 0; max-width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 4mm; margin-bottom: 1mm; }
+  .verb { font-family: 'Fredoka'; font-weight: 700; font-size: 15pt; color: #2d2a4a; line-height: 1.1; }
+  .free { position: relative; justify-content:center; background: radial-gradient(circle at 30% 25%, #a29bfe, #6c5ce7 45%, #e84393 100%);
+    border: 2.5px dashed rgba(255,255,255,.7); outline: 2px solid #6c5ce7; box-shadow: 0 1.2mm 0 #4b3fc4; }
+  .free::before { content: "✦ ✧ ✦"; position: absolute; top: 2mm; color: rgba(255,255,255,.8); font-size: 8pt; letter-spacing: 2mm; }
+  .free::after { content: "✧ ✦ ✧"; position: absolute; bottom: 2mm; color: rgba(255,255,255,.8); font-size: 8pt; letter-spacing: 2mm; }
+  .free .star { font-size: 34pt; color: #ffd43b; line-height: 1; text-shadow: 0 0 4mm rgba(255,212,59,.9), 0 .8mm 0 #e0a800; }
+  .free .verb { color:#fff; font-size: 21pt; letter-spacing: 2px; text-shadow: 0 .8mm 0 rgba(0,0,0,.2); }
+  .free .tag { margin-top: 1mm; background: #fff; color: #6c5ce7; font-family: 'Fredoka'; font-weight: 700;
+    font-size: 7pt; letter-spacing: 1.5px; padding: .6mm 2.5mm; border-radius: 3mm; }
+  footer {
+    position: relative; z-index: 1; text-align: center; margin-top: 4mm;
+    font-family: 'Fredoka'; font-weight: 700; font-size: 14pt; letter-spacing: 4px; color: #6c5ce7;
+  }
+  footer small { display: block; font-size: 10pt; letter-spacing: 3px; color: #ff6b8b; margin-top: 1mm; }
+</style>
+<script src="verbs.js"></script>
+</head>
+<body>
+<div id="out"></div>
+<script>
+// Diseños: ?layout=a4 (1 por hoja A4), h2 (1/8 pliego horizontal, 2 por hoja), v4 (1/8 pliego vertical, 4 por hoja)
+const layout = new URLSearchParams(location.search).get("layout") || "a4";
+const L = {
+  a4: { w: 210, h: 297, per: 1, zoom: 1 },
+  h2: { w: 350, h: 250, per: 2, zoom: 0.83 },
+  v4: { w: 250, h: 350, per: 4, zoom: 0.58 }
+}[layout];
+document.getElementById("pagesize").textContent =
+  `@page { size: ${L.w}mm ${L.h}mm; margin: 0; } .sheet { width:${L.w}mm; height:${L.h}mm; } .page { zoom: ${L.zoom}; }`;
+
+// Azar con semilla fija: los 20 cartones siempre salen iguales
+let seed = 20261029;
+function rand() { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; }
+function pick(arr, n) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a.slice(0, n);
+}
+
+const seen = new Set();
+const cards = [];
+while (cards.length < 20) {
+  const cols = LETTERS.map(l => pick(VERBS[l], l === "N" ? 4 : 5));
+  const key = cols.map(c => c.map(v => v[0]).sort().join()).join("|");
+  if (seen.has(key)) continue;
+  seen.add(key);
+  cols[2].splice(2, 0, null); // casilla FREE en el centro
+  cards.push(cols);
+}
+
+function cardHTML(cols, n) {
+  let cells = "";
+  for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) {
+    const v = cols[c][r];
+    cells += v
+      ? `<div class="cell"><img src="${imgUrl(v[1])}" alt="${v[0]}"><div class="verb">${v[0]}</div></div>`
+      : `<div class="cell free"><div class="star">★</div><div class="verb">FREE</div><div class="tag">SPACE</div></div>`;
+  }
+  return `<div class="page">
+    <header>
+      <div class="sub">English Verbs</div>
+      <div class="letters"><span>B</span><span>I</span><span>N</span><span>G</span><span>O</span></div>
+      <div class="name">Name: <i></i> Card Nº: <b>${String(n).padStart(2, "0")}</b></div>
+    </header>
+    <div class="grid">${cells}</div>
+    <footer>SEBASTIAN GUERRERO 11<small>TEACHER MARIA I. PUERRES</small></footer>
+  </div>`;
+}
+
+let html = "";
+for (let i = 0; i < cards.length; i += L.per) {
+  html += `<div class="sheet">` + cards.slice(i, i + L.per).map((c, k) => cardHTML(c, i + k + 1)).join("") + `</div>`;
+}
+document.getElementById("out").innerHTML = html;
+</script>
+</body>
+</html>
